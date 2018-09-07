@@ -1,2 +1,0 @@
-# Examen
-Created with CodeSandbox
