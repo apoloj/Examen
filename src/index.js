@@ -7,32 +7,41 @@ Vue.component('shopping-cart', {
     }
   },
   template: `
-            <div 
-              v-if="cards.length > 0" 
-              v-for="(card, i) in cards"
-            >
-              <div 
-                class="media text-muted pt-3"
+            <div>
+              <template 
+                v-if="cards.length > 0" 
+                v-for="(card, i) in cards"
+              >
+                <div 
+                  class="media text-muted pt-3"
                 > 
-                  <img data-src="holder.js/32x32?theme=thumb&amp;bg=007bff&amp;fg=007bff&amp;size=1" alt="32x32" class="mr-2 rounded" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2232%22%20height%3D%2232%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_165b47e7f67%20text%20%7B%20fill%3A%23007bff%3Bfont-weight%3Abold%3Bfont-family%3AArial%2C%20Helvetica%2C%20Open%20Sans%2C%20sans-serif%2C%20monospace%3Bfont-size%3A2pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_165b47e7f67%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20fill%3D%22%23007bff%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%2212.3046875%22%20y%3D%2216.9%22%3E32x32%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E"
+                  <img data-src="holder.js/32x32?theme=thumb&amp;bg=007bff&amp;fg=007bff&amp;size=1" alt="32x32" class="mr-2 rounded" :src="card.imagen"
                   data-holder-rendered="true" style="width: 32px; height: 32px;">
                   <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
                     <div class="d-flex justify-content-between align-items-center w-100">
                       <strong class="text-gray-dark">Laptop</strong>
                     </div>
-                    <span class="d-block">@username</span>
+                    <span class="d-block">{{card.name}}</span>
                     <div class="d-flex justify-content-end">
-                      <button type="button" class="btn btn-success">+</button>
-                      <button type="button" class="btn btn-danger">-</button>
+                      <input type="numer" 
+                        :value="card.shopping"  disabled/>
+                      <button 
+                        type="button" 
+                        class="btn btn-danger"
+                      >
+                        -
+                      </button>
                     </div>		
                   </div>
-                </div>
-              </div>`,
+                  </div>
+              </template>
+            </div>`,
 })
 
 const vm = new Vue({
   el: "#app",
   data: {
+    totalShopping: 0 ,
     shoppingCart:[],
     products: [
       {
@@ -76,8 +85,29 @@ const vm = new Vue({
   methods: {
     addToCart(value, index) {
       this.products[index].cantidad = this.products[index].cantidad - 1
-      this.shoppingCart.push(value)
-      this.$emit('shoppingCart:shoppingCart')
+      if(this.shoppingCart.length === 0 ) {
+        this.shoppingCart.push(value)
+        this.shoppingCart[0].shopping = this.shoppingCart[0].shopping + 1
+        this.totalShopping = parseInt(this.totalShopping) + parseInt(this.shoppingCart[0].precio)
+      } else {
+        const resultado = this.shoppingCart.find( shoppingCart => shoppingCart.id === this.products[index].id)
+        console.log('resultado', resultado)
+        for(var i = 0; i < this.shoppingCart.length; i++) {
+          if(resultado) {
+            if (this.shoppingCart[i].id === this.products[index].id) {
+              this.shoppingCart[i].shopping = this.shoppingCart[i].shopping + 1
+              this.totalShopping = parseInt(this.totalShopping) + parseInt(this.shoppingCart[i].precio)
+            }
+          } else {
+            const valueCont = this.shoppingCart.length
+            this.shoppingCart.push(value)
+            this.shoppingCart[valueCont].shopping = this.shoppingCart[valueCont].shopping + 1
+            break
+          }
+        }
+
+      }
+      // this.$emit('shoppingCart:shoppingCart')
     }
   }
 });

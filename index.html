@@ -16,6 +16,7 @@
 			<div id="articule">
 				<div
 				v-for = "(product, index) in products"
+				v-if = "product.cantidad > 0"
 				>
 				<div class="col-md-12">
 					<div class="card flex-md-row mb-4 shadow-sm h-md-250">
@@ -38,7 +39,7 @@
 							class="card-img-right flex-auto  d-lg-block" 
 							data-src="holder.js/200x250?theme=thumb" alt="Thumbnail [200x250]"
 						 	style="width: 200px; height: 250px;"
-							v-bind:src=product.imagen
+							:src="product.imagen"
 						 	data-holder-rendered="true"
 							 >
 					</div>
@@ -49,6 +50,14 @@
 		
 				<div class="my-3 p-3 bg-white rounded shadow-sm">
 					<h6 class="border-bottom border-gray pb-2 mb-0">Carrito de compra</h6>
+					<h2>Total: {{totalShopping}}</h2> 
+					<button 
+						type="button" 
+						class="btn btn-info"
+						v-if= 'totalShopping > 0' 
+					>
+					Enviar
+					</button>
 					<shopping-cart></shopping-cart>
 				</div>
 		</div>
