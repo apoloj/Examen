@@ -3,10 +3,11 @@
 const vm = new Vue({
   el: '#app',
   data: {
+    countTotalShopping: 0,
     totalShopping: 0,
     shoppingCart: [],
-    viewProductosShopping: false,
-    viewShopingCard: true,
+    viewProductosShopping: true,
+    viewShopingCard: false,
     products: [
       {
         id: 1,
@@ -51,6 +52,18 @@ const vm = new Vue({
         })
         this.totalShopping = total
         return this.totalShopping
+      }
+    },
+    countarTotal: function () {
+      if (Object.keys(this.shoppingCart).length === 0) {
+        return '0'
+      } else {
+        let count = 0
+        this.shoppingCart.forEach(function (obj) {
+          count += parseInt(obj.shopping)
+        })
+        this.countTotalShopping = count
+        return this.countTotalShopping
       }
     }
   },
@@ -101,38 +114,177 @@ Vue.component('shopping-cart', {
     }
   },
   template: `
-            <div>
-              <template 
-                v-if="cards.length > 0" 
-                v-for="(card, i) in cards"
-              >
-                <div 
-                  class="media text-muted pt-3"
-                  v-if="card.shopping > 0"
-                > 
-                  <img data-src="holder.js/32x32?theme=thumb&amp;bg=007bff&amp;fg=007bff&amp;size=1" alt="32x32" class="mr-2 rounded" :src="card.imagen"
-                  data-holder-rendered="true" style="width: 32px; height: 32px;">
-                  <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-                    <div class="d-flex justify-content-between align-items-center w-100">
-                      <strong class="text-gray-dark">Laptop</strong>
-                    </div>
-                    <span class="d-block">Nombre: {{card.name}}</span>
-                    <span class="d-block">Precio:$ {{card.precio}}</span>
-                    <div class="d-flex justify-content-end">
-                      <input type="numer" 
-                        :value="card.shopping"  
-                        disabled
-                      />
-                      <button 
-                        type="button" 
-                        class="btn btn-danger"
-                        v-on:click="delectToCart(i)"
+          <div class="container">
+          <div class="py-5 text-center">
+              <h2>Tus Productos</h2>
+          </div>
+          <div class="row">
+              <div class="col-md-6 order-md-2 mb-4">
+                  <h4 class="d-flex justify-content-between align-items-center mb-3">
+                      <span class="text-muted">Tu carrito</span>
+                      <span class="badge badge-secondary badge-pill">{{this.$parent.countTotalShopping}}</span>
+                  </h4>
+                  <ul class="list-group mb-3">
+                      <li 
+                        class="list-group-item d-flex justify-content-between lh-condensed"
+                        v-for="(card, i) in cards"
+                        v-if="card.shopping > 0"
                       >
-                        -
-                      </button>
-                    </div>
+                        <div>
+                            <h6 class="my-0">{{card.name}}</h6>
+                            <div class="">
+                                <input 
+                                  type="number" 
+                                  :value="card.shopping"  
+                                  disabled
+                                >
+                                <button 
+                                    type="button" 
+                                    class="btn btn-danger"
+                                    v-on:click="delectToCart(i)"
+                                >
+                                    -
+                                </button>
+                            </div>
+                            
+                        </div>
+                        <span class="text-muted">$ {{card.precio}}</span>
+                      </li>
+                      <li
+                        class="list-group-item"
+                        v-else
+                      >
+                        <div class="alert alert-danger" role="alert">
+                          El Carrito esta vacio
+                        </div>
+                      </li>
+                      <li class="list-group-item d-flex justify-content-between">
+                      <span>Total (MX)</span>
+                      <strong>$ {{this.$parent.totalShopping}}</strong>
+                      </li>
+                  </ul>
+
+              </div>
+              <div class="col-md-6 order-md-1">
+              <h4 class="mb-3">Datos del Comprador</h4>
+              <form class="needs-validation" novalidate="">
+                  <div class="row">
+                  <div class="col-md-6 mb-3">
+                      <label for="firstName">Nombre</label>
+                      <input type="text" class="form-control" id="firstName" placeholder="" value="" required="">
+                      <div class="invalid-feedback">
+                      Valid first name is required.
+                      </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                      <label for="lastName">Apellido</label>
+                      <input type="text" class="form-control" id="lastName" placeholder="" value="" required="">
+                      <div class="invalid-feedback">
+                      Valid last name is required.
+                      </div>
                   </div>
                   </div>
-              </template>
-            </div>`
+
+                  <div class="mb-3">
+                  <label for="email">Correo <span class="text-muted">(Opcional)</span></label>
+                  <input type="email" class="form-control" id="email" placeholder="you@example.com">
+                  <div class="invalid-feedback">
+                      Please enter a valid email address for shipping updates.
+                  </div>
+                  </div>
+
+                  <div class="mb-3">
+                  <label for="address">Dirección</label>
+                  <input type="text" class="form-control" id="address" placeholder="Av Tumben" required="">
+                  <div class="invalid-feedback">
+                      Please enter your shipping address.
+                  </div>
+                  </div>
+
+                  <div class="mb-3">
+                  <label for="address2">Segunda Dirección <span class="text-muted">(Opcional)</span></label>
+                  <input type="text" class="form-control" id="address2" placeholder="Av Tumben">
+                  </div>
+
+                  <div class="row">
+                  <div class="col-md-5 mb-3">
+                      <label for="country">Pais</label>
+                      <select class="custom-select d-block w-100" id="country" required="">
+                      <option value="">Selecione...</option>
+                      <option>México</option>
+                      </select>
+                      <div class="invalid-feedback">
+                      Please select a valid country.
+                      </div>
+                  </div>
+                  <div class="col-md-4 mb-3">
+                      <label for="state">Estado</label>
+                      <select class="custom-select d-block w-100" id="state" required="">
+                      <option value="">Selecione...</option>
+                      <option>CDMX</option>
+                      </select>
+                      <div class="invalid-feedback">
+                      Please provide a valid state.
+                      </div>
+                  </div>
+                  <div class="col-md-3 mb-3">
+                      <label for="zip">C.P</label>
+                      <input type="text" class="form-control" id="zip" placeholder="" required="">
+                      <div class="invalid-feedback">
+                      Zip code required.
+                      </div>
+                  </div>
+                  </div>
+
+                  <hr class="mb-4">
+
+                  <h4 class="mb-3">Tipo de pago</h4>
+
+                  <div class="d-block my-3">
+                  <div class="custom-control custom-radio">
+                      <input id="credit" name="paymentMethod" type="radio" class="custom-control-input" checked="" required="">
+                      <label class="custom-control-label" for="credit">Tarjeta de Credito</label>
+                  </div>
+
+                  </div>
+                  <div class="row">
+                  <div class="col-md-6 mb-3">
+                      <label for="cc-name">Nombre de Tarjeta de Credito</label>
+                      <input type="text" class="form-control" id="cc-name" placeholder="" required="">
+                      <small class="text-muted">Full name as displayed on card</small>
+                      <div class="invalid-feedback">
+                      Name on card is required
+                      </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                      <label for="cc-number">Numero de tarjeta</label>
+                      <input type="text" class="form-control" id="cc-number" placeholder="" required="">
+                      <div class="invalid-feedback">
+                      Credit card number is required
+                      </div>
+                  </div>
+                  </div>
+                  <div class="row">
+                  <div class="col-md-3 mb-3">
+                      <label for="cc-expiration">Fecha</label>
+                      <input type="text" class="form-control" id="cc-expiration" placeholder="" required="">
+                      <div class="invalid-feedback">
+                      Expiration date required
+                      </div>
+                  </div>
+                  <div class="col-md-3 mb-3">
+                      <label for="cc-cvv">CVV</label>
+                      <input type="text" class="form-control" id="cc-cvv" placeholder="" required="">
+                      <div class="invalid-feedback">
+                      Security code required
+                      </div>
+                  </div>
+                  </div>
+                  <hr class="mb-4">
+                  <button class="btn btn-primary btn-lg btn-block" type="submit">Comprar</button>
+              </form>
+              </div>
+          </div>
+        </div><!--container-->
+            `
 })
